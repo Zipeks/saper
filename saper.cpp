@@ -4,7 +4,7 @@
 using namespace std;
 
 const int rozmiarPola = 8;
-
+int score = 0;
 void printPole(string pole[][rozmiarPola]);
 bool strzel(int x, int y, int bombs[][rozmiarPola]);
 
@@ -71,19 +71,21 @@ int main() {
             } else {
                 if (strzel(x, y, bombs)) {
                     pole[x-1][y-1] = " ";
+                    score++;
                 } else {
-                    cout<<"BOOOOOOOOOOOOOOM!!!"<<endl<<"You lost!";
+                    cout<<"BOOOOOOOOOOOOOOM!!!"<<endl<<"You finished with a score of: "<<score<<"!"<<endl;
                     game = false;
                 }
             }
         }
     }
 
-    return 0;
+    return 1;
 }
 
 void printPole(string pole[][rozmiarPola]) {
-    cout<<"----------------------------"<<endl;
+    cout<<"----------------------"<<endl;
+    cout<<"Your score: "<<score<<endl;
     cout<<"  ";
     for(int i = 1; i <= rozmiarPola; i++) {
         cout<<i<<" ";
