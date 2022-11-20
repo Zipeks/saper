@@ -38,7 +38,7 @@ int main() {
                     }
 
                     bombs[x][y] = 1;
-                    cout<<x+1<<" "<<y+1<<": "<<bombs[x][y]<<endl;
+                    // cout<<x+1<<" "<<y+1<<": "<<bombs[x][y]<<endl;
                     for(int k = -1; k <=1; k++) {
                         for(int l = -1; l <=1; l++) {
                             int xAfter = x-l;
@@ -51,19 +51,19 @@ int main() {
                 }
     }
 
-    for (int i = 0; i < rozmiarPola; i++) {
-        for (int j= 0; j < rozmiarPola; j++) {
-            cout<<bombs[i][j]<<" ";
-        }
-        cout<<endl;
-    }
-    cout<<endl<<endl<<endl;
-    for (int i = 0; i < rozmiarPola; i++) {
-        for (int j= 0; j < rozmiarPola; j++) {
-            cout<<bombsNearby[i][j]<<" ";
-        }
-        cout<<endl;
-    }
+    // for (int i = 0; i < rozmiarPola; i++) {
+    //     for (int j= 0; j < rozmiarPola; j++) {
+    //         cout<<bombs[i][j]<<" ";
+    //     }
+    //     cout<<endl;
+    // }
+    // cout<<endl<<endl<<endl;
+    // for (int i = 0; i < rozmiarPola; i++) {
+    //     for (int j= 0; j < rozmiarPola; j++) {
+    //         cout<<bombsNearby[i][j]<<" ";
+    //     }
+    //     cout<<endl;
+    // }
     bool game = true;
     while(game) {
         printPole(pole);
@@ -80,34 +80,37 @@ int main() {
         } else {
             x = x-1;
             y = y-1;
-            if (pole[x][y].compare(" ")==0) {
-                cout<<"Już tu strzelałeś."<<endl;
+            if (pole[x][y].compare("@")!=0) {
+                cout<<endl<<"\033[31m"<<"Już tu strzelałeś."<<endl<<endl;
             } else {
                 if (strzel(x, y, bombs)) {
-                        if (bombs[x][y]==0) {
+                        if (bombsNearby[x][y]==0) {
                             pole[x][y] = " ";
                         } else {
                             pole[x][y] = to_string(bombsNearby[x][y]);
                         }
-                        for(int k = -1; k <=1; k++) {
-                            for(int l = -1; l <=1; l++) {
-                                int xAfter = x-k;
-                                int yAfter = y-l;
-                                // TEN WARUNEk JEST ZJEBANY
-                                if (!((k == 0) && (l == 0)) && !((xAfter < 0) || (yAfter < 0)) && !((xAfter >= rozmiarPola) || (yAfter >= rozmiarPola)) && (pole[xAfter][yAfter].compare("@") == 0))
-                                {
-                                    if (bombsNearby[xAfter][yAfter]==0) {
-                                        pole[xAfter][yAfter] = " ";
-                                    } else {
-                                        pole[x][y] = to_string(bombsNearby[x][y]);
+                        if (bombsNearby[x][y] == 0) {
+                            for(int k = -1; k <=1; k++) {
+                                for(int l = -1; l <=1; l++) {
+                                    int xAfter = x-k;
+                                    int yAfter = y-l;
+                                    // TEN WARUNEk JEST ZJEBANY
+                                    if (!((k == 0) && (l == 0)) && !((xAfter < 0) || (yAfter < 0)) && !((xAfter >= rozmiarPola) || (yAfter >= rozmiarPola)) && (pole[xAfter][yAfter].compare("@") == 0))
+                                    {
+                                        if (bombsNearby[xAfter][yAfter]==0) {
+                                            pole[xAfter][yAfter] = " ";
+                                        } else {
+                                            pole[xAfter][yAfter] = to_string(bombsNearby[xAfter][yAfter]);
+                                        }
                                     }
                                 }
-                            }
+                          }
                         }
+                        
                     score++;
 
                 } else {
-                    cout<<"BOOOOOOOOOOOOOOM!!!"<<endl<<"You finished with a score of: "<<score<<"!"<<endl;
+                    cout<<"\033[31m"<<"BOOOOOOOOOOOOOOM!!!"<<endl<<"You finished with a score of: "<<score<<"!"<<endl;
                     game = false;
                 }
             }
@@ -118,17 +121,23 @@ int main() {
 }
 
 void printPole(string (&pole)[rozmiarPola][rozmiarPola]) {
-    cout<<"\033[34m"<<"-----------------"<<endl;
-    cout<<"Your score: "<<score<<endl;
-    cout<<"\033[0m"<<"  ";
+    cout<<"\033[34m"<<"────────────────────────"<<endl;
+    cout<<"     "<<"Your score: "<<score<<endl;
+    cout<<"\033[0m"<<"    ";
     for(int i = 1; i <= rozmiarPola; i++) {
-
         cout<<i<<" ";
     }
     cout<<endl;
+ 
+    cout<<"\033[0m"<<"  ┌";
+    for(int i = 1; i < rozmiarPola*2+2; i++) {
+        cout<<"─";
+    }
+    cout<<"┐"<<endl;
+
     int column = 1;
     for (int i = 0; i < rozmiarPola; i++) {
-        cout<<column<<" ";
+        cout<<column<<" │ ";
         for (int j= 0; j < rozmiarPola; j++) {
             if (pole[i][j].compare("1")==0) {
                 cout<<"\033[34m" <<pole[i][j]<<" ";
@@ -143,9 +152,15 @@ void printPole(string (&pole)[rozmiarPola][rozmiarPola]) {
                 cout<<"\033[0m"<<pole[i][j]<<" ";
             }
         }
-        cout<<endl;
+        cout<<"│"<<endl;
         column++;
     }
+
+    cout<<"\033[0m"<<"  └";
+    for(int i = 1; i < rozmiarPola*2+2; i++) {
+        cout<<"─";
+    }
+    cout<<"┘"<<endl;
 }
 
 bool strzel(int x, int y, int (&bombs)[rozmiarPola][rozmiarPola]) {
