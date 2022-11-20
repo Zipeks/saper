@@ -1,12 +1,12 @@
-#include <iostream>
+#include<iostream>
 #include<cstdlib>
 
 using namespace std;
 
 const int rozmiarPola = 8;
 int score = 0;
-void printPole(string pole[][rozmiarPola]);
-bool strzel(int x, int y, int bombs[][rozmiarPola]);
+void printPole(string (&pole)[rozmiarPola][rozmiarPola]);
+bool strzel(int x, int y, int (&bombs)[rozmiarPola][rozmiarPola]);
 
 int main() {
     srand((unsigned) time(NULL));
@@ -62,15 +62,12 @@ int main() {
         }
         cout<<endl;
     }
-
-
-
     bool game = true;
     while(game) {
         printPole(pole);
         bool notShot = true;
         int x,y;
-        cout<<"Podaj rząd: ";
+        cout<<"\033[0m"<<"Podaj rząd: ";
         cin>>x;
         cout<<"Podaj kolumnę: ";
         cin>>y;
@@ -81,7 +78,7 @@ int main() {
         } else {
             x = x-1;
             y = y-1;
-            if (pole[x][y] == " ") {
+            if (pole[x][y].compare(" ")==0) {
                 cout<<"Już tu strzelałeś."<<endl;
             } else {
                 if (strzel(x, y, bombs)) {
@@ -102,11 +99,12 @@ int main() {
     return 1;
 }
 
-void printPole(string pole[][rozmiarPola]) {
-    cout<<"----------------------"<<endl;
+void printPole(string (&pole)[rozmiarPola][rozmiarPola]) {
+    cout<<"\033[0m"<<"-----------------"<<endl;
     cout<<"Your score: "<<score<<endl;
     cout<<"  ";
     for(int i = 1; i <= rozmiarPola; i++) {
+
         cout<<i<<" ";
     }
     cout<<endl;
@@ -114,14 +112,25 @@ void printPole(string pole[][rozmiarPola]) {
     for (int i = 0; i < rozmiarPola; i++) {
         cout<<column<<" ";
         for (int j= 0; j < rozmiarPola; j++) {
-            cout<<pole[i][j]<<" ";
+            if (pole[i][j].compare("1")==0) {
+                cout<<"\033[34m" <<pole[i][j]<<" ";
+            } else if (pole[i][j].compare("2")==0) {
+                 cout<<"\033[32m" <<pole[i][j]<<" ";
+            } else if (pole[i][j].compare("3")==0) {
+                 cout<<"\033[31m" <<pole[i][j]<<" ";
+            } else if (pole[i][j].compare("4")==0) {
+                 cout<<"\033[35m" <<pole[i][j]<<" ";
+            }
+            else {
+                cout<<"\033[0m"<<pole[i][j]<<" ";
+            }
         }
         cout<<endl;
         column++;
     }
 }
 
-bool strzel(int x, int y, int bombs[][rozmiarPola]) {
+bool strzel(int x, int y, int (&bombs)[rozmiarPola][rozmiarPola]) {
 
     // Trafiona
     if (bombs[x][y] == 1) {
