@@ -29,8 +29,8 @@ int main() {
     while (planted < numberOfBombs) {
                 int x = rand() % rozmiarPola;
                 int y = rand() % rozmiarPola;
-                cout<<x<<" "<<y;
-                if (bombs[x][y] != 1) {
+          
+                if (bombs[x][y] == 0) {
                     planted++;
 
                     if (planted > numberOfBombs) {
@@ -38,11 +38,13 @@ int main() {
                     }
 
                     bombs[x][y] = 1;
-                    cout<<": "<<bombs[x][y]<<endl;
+                    cout<<x+1<<" "<<y+1<<": "<<bombs[x][y]<<endl;
                     for(int k = -1; k <=1; k++) {
                         for(int l = -1; l <=1; l++) {
-                            if(!((k==0) && (l==0)) && (x-k >= 0) && (y-l >= 0)) {
-                                bombsNearby[x-k][y-l]++;
+                            int xAfter = x-l;
+                            int yAfter = y-k;
+                            if  (!((k==0) && (l==0)) && !((xAfter < 0) || (yAfter < 0)) && !((xAfter >= rozmiarPola) || (yAfter >= rozmiarPola))) {
+                                bombsNearby[xAfter][yAfter]++;
                             }
                         }
                     }
@@ -82,12 +84,28 @@ int main() {
                 cout<<"Już tu strzelałeś."<<endl;
             } else {
                 if (strzel(x, y, bombs)) {
-                    if (bombsNearby[x][y]==0) {
-                        pole[x][y] = " ";
-                    } else {
-                        pole[x][y] = to_string(bombsNearby[x][y]);
-                    }
+                        if (bombs[x][y]==0) {
+                            pole[x][y] = " ";
+                        } else {
+                            pole[x][y] = to_string(bombsNearby[x][y]);
+                        }
+                        for(int k = -1; k <=1; k++) {
+                            for(int l = -1; l <=1; l++) {
+                                int xAfter = x-k;
+                                int yAfter = y-l;
+                                // TEN WARUNEk JEST ZJEBANY
+                                if (!((k == 0) && (l == 0)) && !((xAfter < 0) || (yAfter < 0)) && !((xAfter >= rozmiarPola) || (yAfter >= rozmiarPola)) && (pole[xAfter][yAfter].compare("@") == 0))
+                                {
+                                    if (bombsNearby[xAfter][yAfter]==0) {
+                                        pole[xAfter][yAfter] = " ";
+                                    } else {
+                                        pole[x][y] = to_string(bombsNearby[x][y]);
+                                    }
+                                }
+                            }
+                        }
                     score++;
+
                 } else {
                     cout<<"BOOOOOOOOOOOOOOM!!!"<<endl<<"You finished with a score of: "<<score<<"!"<<endl;
                     game = false;
@@ -100,9 +118,9 @@ int main() {
 }
 
 void printPole(string (&pole)[rozmiarPola][rozmiarPola]) {
-    cout<<"\033[0m"<<"-----------------"<<endl;
+    cout<<"\033[34m"<<"-----------------"<<endl;
     cout<<"Your score: "<<score<<endl;
-    cout<<"  ";
+    cout<<"\033[0m"<<"  ";
     for(int i = 1; i <= rozmiarPola; i++) {
 
         cout<<i<<" ";
